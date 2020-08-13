@@ -4,6 +4,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TasksModule } from './tasks/tasks.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+
 
 @Module({
   imports: [
@@ -11,6 +14,8 @@ import { TasksModule } from './tasks/tasks.module';
     MongooseModule.forRoot(
       'mongodb+srv://minhtam2048:Luongminhtam123@devconnector-2xm3w.mongodb.net/todo-app?retryWrites=true&w=majority'
     ),
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
