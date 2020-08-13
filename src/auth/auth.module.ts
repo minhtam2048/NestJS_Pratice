@@ -4,8 +4,10 @@ import { AuthService } from './auth.service';
 import { UserSchema } from 'src/schemas/user.schema';
 
 import { MongooseModule } from '@nestjs/mongoose';
-import { PassportModule } from '@nestjs/passport';
+import { PassportModule, PassportStrategy } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { LocalStrategy } from './strategies/local.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 
 @Module({
@@ -19,11 +21,12 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.register({
       secret: 'SuperMegaUltraEpicSecretKey',
       signOptions: {
-        expiresIn: '60s'
+        expiresIn: '1d'
       }
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService]
+  providers: [AuthService, LocalStrategy, JwtStrategy],
+  exports: [AuthService]
 })
 export class AuthModule {}

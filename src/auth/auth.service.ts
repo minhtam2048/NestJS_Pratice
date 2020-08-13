@@ -3,11 +3,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../interfaces/user.model';
 import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
+  constructor(@InjectModel('User') private readonly userModel: Model<User>, private jwtService: JwtService) {}
 
   async signUp(authCredentialsDTO: AuthCredentialsDTO): Promise<void> {
     const { username, email, password } = authCredentialsDTO;
@@ -23,5 +24,30 @@ export class AuthService {
       }
       throw error;
     }
+  }
+
+  async signIn(user: User): Promise<any> {
+    const payload = { 
+      username: user.username,
+      email: user.email, 
+      sub: user._id 
+    };
+    return {
+      accessToken: this.jwtService.sign(payload),
+    };
+  }
+
+  async validateUser(username: string, password: string): Promise<User> {
+    const user = await this.userModel.findOne({ username });
+    if(!user) {
+      return null;
+    }
+
+    const valid = await bcrypt.compare(password, user.password);
+    if(valid) {
+      return user;
+    }
+
+    return null;
   }
 }

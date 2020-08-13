@@ -1,9 +1,10 @@
-import { Controller, Get, Res, HttpStatus, Post, Body, Param, Put, Delete, NotFoundException, UsePipes, ValidationPipe, Query } from '@nestjs/common';
+import { Controller, Get, Res, HttpStatus, Post, Body, Param, Put, Delete, NotFoundException, UsePipes, ValidationPipe, Query, UseGuards } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { Task } from '../interfaces/task.model';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { UpdateTaskDTO } from './dto/update-task.dto';
 import { TaskFilterDTO } from './dto/task-filter.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('tasks')
 export class TasksController {
@@ -19,6 +20,7 @@ export class TasksController {
     });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getTasks(@Res() res, @Query(ValidationPipe) filterDTO: TaskFilterDTO): Promise<Task[]> {
     if(Object.keys(filterDTO).length) {

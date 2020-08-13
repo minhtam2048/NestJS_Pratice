@@ -12,7 +12,12 @@ import { UsersModule } from './users/users.module';
   imports: [
     TasksModule,
     MongooseModule.forRoot(
-      'mongodb+srv://minhtam2048:Luongminhtam123@devconnector-2xm3w.mongodb.net/todo-app?retryWrites=true&w=majority'
+      'mongodb+srv://minhtam2048:Luongminhtam123@devconnector-2xm3w.mongodb.net/todo-app?retryWrites=true&w=majority',
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true,
+      }
     ),
     AuthModule,
     UsersModule,

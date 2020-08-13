@@ -23,6 +23,11 @@ export const UserSchema = new mongoose.Schema({
     maxlength: 100,
     required: true,
   },
+  role: {
+    type: String,
+    enum: ['ADMIN', 'USER'],
+    default: 'USER'
+  },
   avatar: {
     type: String
   },
