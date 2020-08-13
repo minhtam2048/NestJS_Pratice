@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { exception } from 'console';
 import { UpdateTaskDTO } from './dto/update-task.dto';
+import { TaskFilterDTO } from './dto/task-filter.dto';
 
 @Injectable()
 export class TasksService {
@@ -16,8 +17,23 @@ export class TasksService {
     return result;
   }
 
-  async getAllTasks(): Promise<Task[]>{
+  async getAllTasks(): Promise<Task[]> {
     const tasks = await this.taskModel.find().exec();
+    return tasks;
+  }
+
+  async getTasksWithFilter(filterDTO: TaskFilterDTO): Promise<Task[]> {
+    const { status, search } = filterDTO;
+    let tasks = await this.getAllTasks();
+    
+    if(status) {
+      tasks = tasks.filter(task => task.status === status);
+    }
+
+    if(search) {
+      tasks = tasks.filter(task => task.title.includes(search) || task.description.includes(search));
+    }
+
     return tasks;
   }
 

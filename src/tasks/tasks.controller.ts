@@ -1,8 +1,9 @@
-import { Controller, Get, Res, HttpStatus, Post, Body, Param, Put, Delete, NotFoundException, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Res, HttpStatus, Post, Body, Param, Put, Delete, NotFoundException, UsePipes, ValidationPipe, Query } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { Task } from './interfaces/task.model';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { UpdateTaskDTO } from './dto/update-task.dto';
+import { TaskFilterDTO } from './dto/task-filter.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -19,9 +20,16 @@ export class TasksController {
   }
 
   @Get()
-  async getAllTasks(@Res() res): Promise<Task[]> {
-    const tasks = await this.taskService.getAllTasks();
-    return res.status(HttpStatus.OK).json(tasks);
+  async getTasks(@Res() res, @Query() filterDTO: TaskFilterDTO): Promise<Task[]> {
+    if(Object.keys(filterDTO).length) {
+      const tasks = await this.taskService.getTasksWithFilter(filterDTO);
+      console.log(tasks);
+      return res.status(HttpStatus.OK).json(tasks);
+    } else {
+      const tasks = await this.taskService.getAllTasks();
+      console.log(tasks);
+      return res.status(HttpStatus.OK).json(tasks);
+    }
   }
 
   @Get(':taskId')
