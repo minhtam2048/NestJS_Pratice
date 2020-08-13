@@ -32,8 +32,12 @@ export class TasksService {
   }
 
   async updateTask(taskId: string, updateTaskDTO: UpdateTaskDTO): Promise<Task> {
-    const task = await this.taskModel.findByIdAndUpdate(taskId, updateTaskDTO, {new: true}).exec();   
-    return task;
+    try{
+      const task = await this.taskModel.findByIdAndUpdate(taskId, updateTaskDTO, {new: true}).exec();   
+      return task;
+    }catch (error){
+      throw new NotFoundException("Could not find this task");    
+    }
   }
 
   async deleteTask(taskId: string) : Promise<void> {
