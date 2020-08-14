@@ -1,4 +1,4 @@
-import { Controller, Get, Res, HttpStatus, Post, Body, Param, Put, Delete, NotFoundException, UsePipes, ValidationPipe, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Res, HttpStatus, Post, Body, Param, Put, Delete, UsePipes, ValidationPipe, Query, UseGuards, Request } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { Task } from '../interfaces/task.model';
 import { CreateTaskDTO } from './dto/create-task.dto';
@@ -10,11 +10,12 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class TasksController {
   constructor(private taskService: TasksService) {}
 
-  @Post()
   @UseGuards(JwtAuthGuard)
-  @UsePipes(ValidationPipe)
-  async createTask(@Res() res, @Body() createTaskDTO: CreateTaskDTO) {
-    const task = await this.taskService.createTask(createTaskDTO);
+  @Post()
+  async createTask(@Request() req, @Res() res, @Body(ValidationPipe) createTaskDTO: CreateTaskDTO) {
+ 
+    const task = await this.taskService.createTask(createTaskDTO, req.user._id);
+    console.log(req)
     return res.status(HttpStatus.OK).json({
       message: "Task was created successfully",
       task

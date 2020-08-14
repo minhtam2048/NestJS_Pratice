@@ -1,8 +1,10 @@
-import { IsNotEmpty, MinLength ,MaxLength, IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, MinLength ,MaxLength, IsEnum, IsOptional, IsString, IsMongoId } from 'class-validator';
 import { TaskStatus } from '../../shared/enums/task-status.enum';
 
 export class CreateTaskDTO {
   
+  user: string;
+
   @IsString({
     message: 'Invalid'
   })
