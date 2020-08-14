@@ -1,4 +1,4 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, HttpException, HttpStatus, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../interfaces/user.model';
@@ -14,6 +14,7 @@ export class AuthService {
     const { username, email, password } = authCredentialsDTO;
     
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = new this.userModel({ username, email, password: hashedPassword });
 
     try {
@@ -40,14 +41,15 @@ export class AuthService {
   async validateUser(username: string, password: string): Promise<User> {
     const user = await this.userModel.findOne({ username });
     if(!user) {
-      return null;
+      throw new UnauthorizedException('User not found');
     }
 
     const valid = await bcrypt.compare(password, user.password);
-    if(valid) {
-      return user;
+    
+    if(!valid) {
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    return null;
+    return user;
   }
 }

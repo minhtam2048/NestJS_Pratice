@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,9 +11,9 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    TasksModule,
+    ConfigModule.forRoot(),
     MongooseModule.forRoot(
-      'mongodb+srv://minhtam2048:Luongminhtam123@devconnector-2xm3w.mongodb.net/todo-app?retryWrites=true&w=majority',
+      process.env.MONGODB_URI,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -20,6 +21,7 @@ import { UsersModule } from './users/users.module';
       }
     ),
     AuthModule,
+    TasksModule,
     UsersModule,
   ],
   controllers: [AppController],
