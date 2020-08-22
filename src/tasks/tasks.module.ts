@@ -4,6 +4,8 @@ import { TasksService } from './tasks.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TaskSchema } from 'src/schemas/Task.schema';
 import { UsersModule } from 'src/users/users.module';
+import { CommentsModule } from 'src/comments/comments.module';
+import { CommentsService } from 'src/comments/comments.service';
 
 @Module({
   imports: [
@@ -12,7 +14,8 @@ import { UsersModule } from 'src/users/users.module';
         { name: 'Task', schema: TaskSchema }
       ],
     ),
-    UsersModule
+    UsersModule,
+    CommentsModule,
   ],
   controllers: [TasksController],
   providers: [TasksService],

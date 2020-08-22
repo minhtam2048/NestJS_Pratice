@@ -28,12 +28,14 @@ export class AuthService {
   }
 
   async signIn(user: User): Promise<any> {
+    user = await this.userModel.findOne(user);
     const payload = { 
       username: user.username,
       email: user.email, 
       sub: user._id 
     };
     return {
+      user,
       accessToken: this.jwtService.sign(payload),
     };
   }

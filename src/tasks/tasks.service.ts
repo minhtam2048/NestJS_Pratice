@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/common';
 import { Task } from '../interfaces/task.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -7,13 +7,17 @@ import { exception } from 'console';
 import { UpdateTaskDTO } from './dto/update-task.dto';
 import { TaskFilterDTO } from './dto/task-filter.dto';
 import { UsersService } from 'src/users/users.service';
+import { CreateCommentDTO } from 'src/users/dto/create-comment.dto';
+import { CommentsService } from 'src/comments/comments.service';
 
 @Injectable()
 export class TasksService {
   constructor(
     @InjectModel('Task') 
     private readonly taskModel: Model<Task>,
-    private readonly usersService: UsersService) {}
+    private readonly usersService: UsersService,
+    private readonly commentsService: CommentsService
+   ) {}
 
   async createTask(createTaskDTO: CreateTaskDTO, userId: string): Promise<Task> {
 
@@ -85,6 +89,20 @@ export class TasksService {
     }
 
     return task;
+  }
+
+  async createComment(commentatorId: string, taskId: string, createCommentDTO: CreateCommentDTO) {
+    const commentator = await this.usersService.getSingleUser(commentatorId);
+    const task = await this.taskModel.findById(taskId);
+
+    createCommentDTO.user_id = commentator._id;
+
+    const newComment = await this.commentsService.createComment(createCommentDTO);
+    console.log(newComment);
+
+    task.comments.unshift(newComment);
+
+    await task.save();
   }
 }
 

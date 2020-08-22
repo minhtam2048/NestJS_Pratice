@@ -20,20 +20,10 @@ export const TaskSchema = new mongoose.Schema({
     enum: ['OPEN', 'IN_PROGRESS', 'DONE'],
     required: true
   },
-  comment: [
+  comments: [
     {
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-      },
-      text: {
-        type: String,
-        required: true
-      },
-      date: {
-        type: Date,
-        default: Date.now()
-      }
+     type: mongoose.Schema.Types.ObjectId,
+     ref: 'Comment'
     }
   ],
 });

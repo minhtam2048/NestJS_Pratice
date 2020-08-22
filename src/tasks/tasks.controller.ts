@@ -5,6 +5,7 @@ import { CreateTaskDTO } from './dto/create-task.dto';
 import { UpdateTaskDTO } from './dto/update-task.dto';
 import { TaskFilterDTO } from './dto/task-filter.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CreateCommentDTO } from 'src/users/dto/create-comment.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -15,7 +16,6 @@ export class TasksController {
   async createTask(@Request() req, @Res() res, @Body(ValidationPipe) createTaskDTO: CreateTaskDTO) {
  
     const task = await this.taskService.createTask(createTaskDTO, req.user._id);
-    console.log(req)
     return res.status(HttpStatus.OK).json({
       message: "Task was created successfully",
       task
@@ -61,6 +61,17 @@ export class TasksController {
     await this.taskService.deleteTask(taskId)
     return res.status(HttpStatus.OK).json({
       message: 'Task was deleted successfully',
+    });
+  }
+
+  @Post('/comment/:taskId')
+  @UseGuards(JwtAuthGuard)
+  async commentTask(@Res() res, @Request() req, @Param('taskId') taskId , @Body() createCommentDTO: CreateCommentDTO) {
+    const comment = await this.taskService.createComment(req.user._id, taskId, createCommentDTO);
+
+    return res.status(HttpStatus.OK).json({
+      message: "comment was created successfully",
+      comment
     });
   }
 }
